@@ -153,7 +153,7 @@ fit\_model\_by\_salinity(summary\_data, "45")
 
 
 
-!\[Figure3](figures/Figure3.png)
+![Figure3](figures/Figure.3.png)
 
 
 
