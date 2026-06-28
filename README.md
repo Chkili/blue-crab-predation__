@@ -573,17 +573,73 @@ ggplot(df_evolution, aes(x = mois)) +
 
 Figure 7. Temporal dynamics of the average predation rate of the blue crab Callinectes sapidus in the Berre Lagoon between January 2023 and December 2025. The red curve represents the predation rate, the orange curve the temperature, the light blue the salinity. The areas around the curves represent the confidence interval. 
 
+
 ```R
 
 # lagoon polygon
-lagune <- st_read (" [couche_Berre](couche_Berre.shp) ")
+lagune <- st_read("couche_Berre.shp")
 
-# convert stations to spatial points
+# convert to spatial points
 points_sf <- st_as_sf(
   df_month,
   coords = c("lon", "lat"),
+  crs = 4326
+)
 
+# prediction grid
+grille <- st_make_grid(
+  lagune,
+  cellsize = 400,
+  what = "centers"
+) %>%
+  st_as_sf()
+
+# monthly kriging function
+faire_krigeage_mois <- function(points_mois){
+
+  points_sp <- as(points_mois, "Spatial")
+
+  vgm_exp <- variogram(pred ~ 1, points_sp)
+
+  vgm_model <- fit.variogram(
+    vgm_exp,
+    vgm(model = "Exp")
+  )
+
+  krige(
+    pred ~ 1,
+    locations = points_sp,
+    newdata = as(grille, "Spatial"),
+    model = vgm_model
+  )
+}
+
+# apply kriging for each month
+liste_krigeages <- lapply(
+  unique(points_sf$mois),
+  function(m){
+    pts <- points_sf %>% filter(mois == m)
+    faire_krigeage_mois(pts)
+  }
+)
+
+krig_all <- do.call(rbind, liste_krigeages)
+
+# final map
+ggplot() +
+  geom_sf(
+    data = st_as_sf(krig_all),
+    aes(fill = var1.pred)
+  ) +
+  geom_sf(data = lagune, fill = NA) +
+  geom_sf(data = points_sf) +
+  facet_wrap(~ mois) +
+  scale_fill_viridis_c()
 ```
+
+[FigureS1](FigureS1.png)
+
+Figure S1. Monthly spatial predictions of *Callinectes sapidus* predation rates on Manila clams in the Berre Lagoon (2023–2025).
 
 \## Contact
 
