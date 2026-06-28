@@ -422,107 +422,7 @@ points(coordinates(df), pch = 16)
 Figure 6. Response surface showing the ratio of intact to broken clam shells / broken shells of the clam Ruditapes philippinarum after predation by the blue crab Callinectes sapidus across temperature and salinity gradients. The color scale represents the ratio of intact to broken clam shells / broken shells (the higher the ratio, the fewer broken shells there are), blue = low values; red = high values. 
 
 
-
----
-
-
-## Ratio of intact to broken shells 
-
-
-```R
-
-# import data
-df <- read_delim(
-  "coquilles.txt",
-  delim = "\t",
-  show_col_types = FALSE
-)
-
-# data cleaning
-df <- df %>%
-  mutate(
-    temp = as.numeric(gsub(",", ".", temp)),
-    sal  = as.numeric(gsub(",", ".", sal)),
-    blue = as.numeric(gsub(",", ".", blue))
-  ) %>%
-  filter(!is.na(temp), !is.na(sal), !is.na(blue)) %>%
-  group_by(temp, sal) %>%
-  summarise(
-    blue = mean(blue),
-    .groups = "drop"
-  )
-
-# convert to spatial points
-coordinates(df) <- ~ temp + sal
-
-# empirical variogram
-vgm_emp <- variogram(
-  blue ~ 1,
-  df
-)
-
-# variogram model fitting
-vgm_fit <- fit.variogram(
-  vgm_emp,
-  vgm(
-    psill = var(df$blue),
-    model = "Sph",
-    range = 8,
-    nugget = 0
-  )
-)
-
-# prediction grid
-temp_seq <- seq(14, 32, length.out = 200)
-sal_seq  <- seq(5, 45, length.out = 200)
-
-grid_df <- expand.grid(
-  temp = temp_seq,
-  sal = sal_seq
-)
-
-coordinates(grid_df) <- ~ temp + sal
-gridded(grid_df) <- TRUE
-
-# kriging interpolation
-krig <- krige(
-  blue ~ 1,
-  locations = df,
-  newdata = grid_df,
-  model = vgm_fit
-)
-
-# predicted values
-res <- as.data.frame(krig)
-
-z <- matrix(
-  res$var1.pred,
-  nrow = length(temp_seq),
-  ncol = length(sal_seq)
-)
-
-# 2D niche map
-image.plot(
-  temp_seq,
-  sal_seq,
-  z,
-  xlab = "Temperature (°C)",
-  ylab = "Salinity"
-)
-
-contour(
-  temp_seq,
-  sal_seq,
-  z,
-  add = TRUE
-)
-
-points(coordinates(df), pch = 16)
-```
-
-![Figure6](Figure6.png)
-
-## Temporal evolution of predation, temperature and salinity
+## Estimating and mapping C. sapidus predation in natural conditions
 
 ```R
 # import data
@@ -569,7 +469,7 @@ ggplot(df_evolution, aes(x = mois)) +
   geom_line(aes(y = mean_sal), color = "green")
 ```
 
-[Figure7](Figure7.png)
+![Figure7](Figure7.png)
 
 Figure 7. Temporal dynamics of the average predation rate of the blue crab Callinectes sapidus in the Berre Lagoon between January 2023 and December 2025. The red curve represents the predation rate, the orange curve the temperature, the light blue the salinity. The areas around the curves represent the confidence interval. 
 
@@ -637,9 +537,11 @@ ggplot() +
   scale_fill_viridis_c()
 ```
 
-[FigureS1](FigureS1.png)
+![FigureS1](FigureS1.png)
 
 Figure S1. Monthly spatial predictions of *Callinectes sapidus* predation rates on Manila clams in the Berre Lagoon (2023–2025).
+
+
 
 \## Contact
 
