@@ -91,66 +91,32 @@ In our study, independent regressions were fitted for each salinity treatment to
 
 ```R
 
-\# set working directory
 
+# set working directory
 setwd("C:/Users/...")
 
-
-
-\# import data
-
-data <- read.table("Sal\_Temp\_Nb-clams - 3D.txt", header = TRUE)
-
-
+# import data
+data <- read.table("Sal_Temp_Nb-clams - 3D.txt", header = TRUE)
 
 data <- data %>%
+  mutate(
+    Temperature = as.numeric(gsub(",", ".", Temperature)),
+    Predation = as.numeric(gsub(",", ".", Predation)),
+    Salinity = as.factor(Salinity)
+  ) %>%
+  drop_na() %>%
+  filter(Temperature >= 14)
 
-&#x20; mutate(
-
-&#x20;   Temperature = as.numeric(gsub(",", ".", Temperature)),
-
-&#x20;   Predation = as.numeric(gsub(",", ".", Predation)),
-
-&#x20;   Salinity = as.factor(Salinity)
-
-&#x20; ) %>%
-
-&#x20; drop\_na()
-
-
-
-\# summarise by salinity × temperature
-
-summary\_data <- data %>%
-
-&#x20; group\_by(Salinity, Temperature) %>%
-
-&#x20; summarise(
-
-&#x20;   n = n(),
-
-&#x20;   mean = mean(Predation),
-
-&#x20;   se = sd(Predation)/sqrt(n)
-
-&#x20; )
-
-
-
-\# fit regressions
-
-fit\_model\_by\_salinity(summary\_data, "5")
-
-fit\_model\_by\_salinity(summary\_data, "18")
-
-fit\_model\_by\_salinity(summary\_data, "25")
-
-fit\_model\_by\_salinity(summary\_data, "35")
-
-fit\_model\_by\_salinity(summary\_data, "45")
-
+summary_data <- data %>%
+  group_by(Salinity, Temperature) %>%
+  summarise(
+    n = n(),
+    mean = mean(Predation),
+    se = sd(Predation) / sqrt(n),
+    lower = mean - 1.96 * se,
+    upper = mean + 1.96 * se
+  )
 ```
-
 
 
 ![Figure4](Figure4.png)
