@@ -231,14 +231,14 @@ A GAM model was used to estimate predation intensity as a function of salinity a
 
 # import data
 data <- read.delim(
-  "Sal_Temp_pourcentage - 3D.txt",
+  "Sal_Temp_Nb-clams - 3D.txt",
   header = TRUE,
   sep = "\t",
   dec = ","
 )
 
 # data cleaning
-data$Salinity <- as.numeric(data$Salinite)
+data$Salinity <- as.numeric(data$Salinity)
 data$Temperature <- as.numeric(data$Temperature)
 data$Predation <- as.numeric(data$Predation)
 
@@ -273,7 +273,7 @@ grid <- expand.grid(
 grid$Predation_pred <- predict(mod_gam, newdata = grid)
 
 grid$Predation_pred[grid$Predation_pred < 0] <- 0
-grid$Predation_pred[grid$Predation_pred > 50] <- 50
+grid$Predation_pred[grid$Predation_pred > 20] <- 20
 
 # matrix conversion
 z_matrix <- matrix(
@@ -290,7 +290,7 @@ surfaceplot3d <- plot_ly() %>%
     z = t(z_matrix),
     colorscale = "Jet",
     cmin = 0,
-    cmax = 50,
+    cmax = 20,
     showscale = FALSE
   ) %>%
   layout(
@@ -298,7 +298,7 @@ surfaceplot3d <- plot_ly() %>%
       xaxis = list(title = "Salinity"),
       yaxis = list(title = "Temperature (°C)"),
       zaxis = list(
-        title = "% clam biomass / ind. / day"
+        title = "No. clams eaten / ind. / day"
       )
     )
   )
