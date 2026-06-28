@@ -234,42 +234,82 @@ A GAM model was used to estimate predation intensity as a function of salinity a
 
 ```R
 
-data <- read.delim("Sal\_Temp\_Nb-clams - 3D.txt")
-
-
-
-mod\_gam <- gam(
-
-&#x20; Predation \~ s(Salinity, Temperature, k = 10),
-
-&#x20; data = data,
-
-&#x20; method = "REML"
-
+# import data
+data <- read.delim(
+  "Sal_Temp_pourcentage - 3D.txt",
+  header = TRUE,
+  sep = "\t",
+  dec = ","
 )
 
+# data cleaning
+data$Salinity <- as.numeric(data$Salinite)
+data$Temperature <- as.numeric(data$Temperature)
+data$Predation <- as.numeric(data$Predation)
 
+data <- na.omit(data)
 
-sal\_grid <- seq(min(data$Salinity), max(data$Salinity), length.out = 50)
+# GAM model
+mod_gam <- gam(
+  Predation ~ s(Salinity, Temperature, k = 10),
+  data = data,
+  method = "REML"
+)
 
-temp\_grid <- seq(min(data$Temperature), max(data$Temperature), length.out = 50)
+# prediction grid
+sal_grid <- seq(
+  min(data$Salinity),
+  max(data$Salinity),
+  length.out = 120
+)
 
-
+temp_grid <- seq(
+  min(data$Temperature),
+  max(data$Temperature),
+  length.out = 120
+)
 
 grid <- expand.grid(
-
-&#x20; Salinity = sal\_grid,
-
-&#x20; Temperature = temp\_grid
-
+  Salinity = sal_grid,
+  Temperature = temp_grid
 )
 
+# predictions
+grid$Predation_pred <- predict(mod_gam, newdata = grid)
 
+grid$Predation_pred[grid$Predation_pred < 0] <- 0
+grid$Predation_pred[grid$Predation_pred > 50] <- 50
 
-grid$Predation\_pred <- predict(mod\_gam, newdata = grid)
+# matrix conversion
+z_matrix <- matrix(
+  grid$Predation_pred,
+  nrow = length(sal_grid),
+  ncol = length(temp_grid)
+)
 
+# 3D surface plot
+surfaceplot3d <- plot_ly() %>%
+  add_surface(
+    x = sal_grid,
+    y = temp_grid,
+    z = t(z_matrix),
+    colorscale = "Jet",
+    cmin = 0,
+    cmax = 50,
+    showscale = FALSE
+  ) %>%
+  layout(
+    scene = list(
+      xaxis = list(title = "Salinity"),
+      yaxis = list(title = "Temperature (°C)"),
+      zaxis = list(
+        title = "% clam biomass / ind. / day"
+      )
+    )
+  )
+
+surfaceplot3d
 ```
-
 
 
 ![Figure5](Figure5.png)
