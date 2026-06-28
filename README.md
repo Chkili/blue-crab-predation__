@@ -2,7 +2,7 @@
 
 These R scripts come with the following research article:
 
-\*\*“Temperature and salinity jointly shape predation by the invasive blue crab \*Callinectes sapidus\* in the Berre Lagoon (France)”\*\* (\*Chkili et al., submitted to Journal of Animal Ecology\*).
+**“Temperature and salinity jointly shape predation by the invasive blue crab *Callinectes sapidus* in the Berre Lagoon (France)”** (*Chkili et al., submitted to Journal of Animal Ecology*).
 
 
 
@@ -10,7 +10,7 @@ It includes (i) regression analyses to estimate temperature-dependent predation 
 
 
 
-\---
+---
 
 ## Experimental datasets
 
@@ -217,7 +217,7 @@ Figure 4. Effects of temperature and salinity on the predation activity of the b
 
 
 
-\---
+---
 
 ## 3-dimensional regression of predation
 
@@ -310,7 +310,7 @@ surfaceplot3d
 ![Figure5](Figure5.png)
 
 
-Figure 5. Three-dimensional predicted response surface showing the combined effects of temperature (°C) and salinity on the number of clams (Ruditapes philippinarum) consumed per individual blue crab (Callinectes sapidus) per day (clams eaten ind⁻¹ d⁻¹). Colors indicate feeding intensity (number of clams eaten ind-1 day-1), ranging from low values (blue) to high values (yellow/orange). The black dotted lines represent the temperatures and salinities experimentally measured in our study.
+Figure 5. Three-dimensional predicted response surface showing the combined effects of temperature (°C) and salinity on the number of clams (*Ruditapes philippinarum*) consumed per individual blue crab (*Callinectes sapidus*) per day (clams eaten ind⁻¹ d⁻¹). Colors indicate feeding intensity (number of clams eaten ind-1 day-1), ranging from low values (blue) to high values (yellow/orange). The black dotted lines represent the temperatures and salinities experimentally measured in our study.
 
 
 
@@ -466,7 +466,7 @@ ggplot(df_evolution, aes(x = mois)) +
 
 ![Figure7](Figure7.png)
 
-Figure 7. Temporal dynamics of the average predation rate of the blue crab Callinectes sapidus in the Berre Lagoon between January 2023 and December 2025. The red curve represents the predation rate, the orange curve the temperature, the light blue the salinity. The areas around the curves represent the confidence interval. 
+Figure 7. Temporal dynamics of the average predation rate of the blue crab *Callinectes sapidus* in the Berre Lagoon between January 2023 and December 2025. The red curve represents the predation rate, the orange curve the temperature, the light blue the salinity. The areas around the curves represent the confidence interval. 
 
 
 ```R
@@ -538,15 +538,16 @@ Figure S1. Monthly spatial predictions of *Callinectes sapidus* predation rates 
 
 
 
-\## Contact
+## Contact
 
 
 
-\*\*Guillaume Marchessaux\*\*
+**Guillaume Marchessaux**
 
 Institut Méditerranéen d’Océanologie (MIO), Marseille, France
 
-Corresponding author: \[guillaume.marchessaux@ird.fr]
+Corresponding author: [guillaume.marchessaux@ird.fr](mailto:guillaume.marchessaux@ird.fr)
+
 
 
 
