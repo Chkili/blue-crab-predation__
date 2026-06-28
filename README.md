@@ -88,7 +88,6 @@ library(fields)
 In our study, independent regressions were fitted for each salinity treatment to characterize thermal responses of predation and identify threshold effects.
 
 
-
 ```R
 
 
@@ -117,7 +116,6 @@ summary_data <- data %>%
     upper = mean + 1.96 * se
   )
 ```
-
 
 ![Figure4](Figure4.png)
 
