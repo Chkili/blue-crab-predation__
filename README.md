@@ -81,7 +81,7 @@ library(fields)
 
 \---
 
-## Calculation of temperature-dependent predation regressions
+## Temperature and salinity effects on predation
 
 
 
@@ -224,7 +224,7 @@ Figure 4. Effects of temperature and salinity on the predation activity of the b
 
 \---
 
-## Construction of the 3D predation surface
+## 3-dimensional regression of predation
 
 
 
