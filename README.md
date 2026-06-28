@@ -319,10 +319,10 @@ Figure 5. Three-dimensional predicted response surface showing the combined effe
 
 
 
-\---
+---
 
 
-\## Ratio of intact to broken shells 
+## Ratio of intact to broken shells 
 
 
 ```R
@@ -423,9 +423,167 @@ Figure 6. Response surface showing the ratio of intact to broken clam shells / b
 
 
 
-\---
+---
 
 
+## Ratio of intact to broken shells 
+
+
+```R
+
+# import data
+df <- read_delim(
+  "coquilles.txt",
+  delim = "\t",
+  show_col_types = FALSE
+)
+
+# data cleaning
+df <- df %>%
+  mutate(
+    temp = as.numeric(gsub(",", ".", temp)),
+    sal  = as.numeric(gsub(",", ".", sal)),
+    blue = as.numeric(gsub(",", ".", blue))
+  ) %>%
+  filter(!is.na(temp), !is.na(sal), !is.na(blue)) %>%
+  group_by(temp, sal) %>%
+  summarise(
+    blue = mean(blue),
+    .groups = "drop"
+  )
+
+# convert to spatial points
+coordinates(df) <- ~ temp + sal
+
+# empirical variogram
+vgm_emp <- variogram(
+  blue ~ 1,
+  df
+)
+
+# variogram model fitting
+vgm_fit <- fit.variogram(
+  vgm_emp,
+  vgm(
+    psill = var(df$blue),
+    model = "Sph",
+    range = 8,
+    nugget = 0
+  )
+)
+
+# prediction grid
+temp_seq <- seq(14, 32, length.out = 200)
+sal_seq  <- seq(5, 45, length.out = 200)
+
+grid_df <- expand.grid(
+  temp = temp_seq,
+  sal = sal_seq
+)
+
+coordinates(grid_df) <- ~ temp + sal
+gridded(grid_df) <- TRUE
+
+# kriging interpolation
+krig <- krige(
+  blue ~ 1,
+  locations = df,
+  newdata = grid_df,
+  model = vgm_fit
+)
+
+# predicted values
+res <- as.data.frame(krig)
+
+z <- matrix(
+  res$var1.pred,
+  nrow = length(temp_seq),
+  ncol = length(sal_seq)
+)
+
+# 2D niche map
+image.plot(
+  temp_seq,
+  sal_seq,
+  z,
+  xlab = "Temperature (°C)",
+  ylab = "Salinity"
+)
+
+contour(
+  temp_seq,
+  sal_seq,
+  z,
+  add = TRUE
+)
+
+points(coordinates(df), pch = 16)
+```
+
+![Figure6](Figure6.png)
+
+## Temporal evolution of predation, temperature and salinity
+
+```R
+# import data
+df <- read.delim(
+  "etimation_predation_Berre.txt",
+  header = TRUE,
+  sep = "\t",
+  dec = ","
+)
+# data cleaning
+df <- df %>%
+  mutate(
+    lat = as.numeric(gsub(",", ".", Lat)),
+    lon = as.numeric(gsub(",", ".", Long)),
+    pred = as.numeric(gsub(",", ".", Predation)),
+    temp = as.numeric(gsub(",", ".", temp)),
+    sal = as.numeric(gsub(",", ".", Sal)),
+    date = dmy(date),
+    mois = floor_date(date, "month")
+  )
+# monthly means per station
+df_month <- df %>%
+  group_by(`nom station`, mois) %>%
+  summarise(
+    lat = mean(lat),
+    lon = mean(lon),
+    pred = mean(pred),
+    temp = mean(temp),
+    sal = mean(sal),
+    .groups = "drop"
+  )
+# monthly evolution
+df_evolution <- df_month %>%
+  group_by(mois) %>%
+  summarise(
+    mean_pred = mean(pred),
+    mean_temp = mean(temp),
+    mean_sal = mean(sal)
+  )
+
+ggplot(df_evolution, aes(x = mois)) +
+  geom_line(aes(y = mean_pred), color = "red") +
+  geom_line(aes(y = mean_temp), color = "orange") +
+  geom_line(aes(y = mean_sal), color = "green")
+```
+
+[Figure7](Figure7.png)
+
+Figure 7. Temporal dynamics of the average predation rate of the blue crab Callinectes sapidus in the Berre Lagoon between January 2023 and December 2025. The red curve represents the predation rate, the orange curve the temperature, the light blue the salinity. The areas around the curves represent the confidence interval. 
+
+```R
+
+# lagoon polygon
+lagune <- st_read (" [couche_Berre](couche_Berre.shp) ")
+
+# convert stations to spatial points
+points_sf <- st_as_sf(
+  df_month,
+  coords = c("lon", "lat"),
+
+```
 
 \## Contact
 
