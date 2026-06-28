@@ -19,10 +19,6 @@ It includes (i) regression analyses to estimate temperature-dependent predation 
 [Predation number of clams](Sal_Temp_Nb-clams%20-%203D.txt) <br>
 
 
-
-\[Predation biomass percentage](data/Sal\_Temp\_pourcentage\_3D.txt) <br>
-
-
 [Shell breakage dataset](coquilles.txt) <br>
 
 
@@ -32,7 +28,6 @@ It includes (i) regression analyses to estimate temperature-dependent predation 
 
 
 [Berre Lagoon predation estimation](estimation\_predation\_Berre.txt) <br>
-
 
 
 [Berre Lagoon shapefile](couche\_Berre.shp)
