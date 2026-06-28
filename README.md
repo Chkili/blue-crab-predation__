@@ -89,14 +89,13 @@ In our study, independent regressions were fitted for each salinity treatment to
 
 
 ```R
-
-
 # set working directory
 setwd("C:/Users/...")
 
 # import data
 data <- read.table("Sal_Temp_Nb-clams - 3D.txt", header = TRUE)
 
+# data cleaning
 data <- data %>%
   mutate(
     Temperature = as.numeric(gsub(",", ".", Temperature)),
@@ -106,6 +105,7 @@ data <- data %>%
   drop_na() %>%
   filter(Temperature >= 14)
 
+# summary statistics
 summary_data <- data %>%
   group_by(Salinity, Temperature) %>%
   summarise(
@@ -113,8 +113,105 @@ summary_data <- data %>%
     mean = mean(Predation),
     se = sd(Predation) / sqrt(n),
     lower = mean - 1.96 * se,
-    upper = mean + 1.96 * se
+    upper = mean + 1.96 * se,
+    .groups = "drop"
   )
+
+# R² calculation
+calc_r2 <- function(model, df) {
+  pred <- predict(model, newdata = df)
+  1 - sum((df$mean - pred)^2) / sum((df$mean - mean(df$mean))^2)
+}
+
+# model fitting depending on salinity
+fit_model_by_salinity <- function(df, s) {
+
+  if(s == "5") {
+
+    model <- nlsLM(
+      mean ~ A * (1 - exp(-k * (Temperature - Tcrit))),
+      data = df
+    )
+
+  } else if(s == "18") {
+
+    model <- nlsLM(
+      mean ~ y0 + a * exp(b * Temperature),
+      data = df %>% filter(Temperature != 24)
+    )
+
+  } else if(s == "25") {
+
+    model <- nlsLM(
+      mean ~ y0 + a * (1 - exp(-b * Temperature)),
+      data = df
+    )
+
+  } else if(s %in% c("35", "45")) {
+
+    model <- lm(
+      mean ~ Temperature + I(Temperature^2),
+      data = df
+    )
+  }
+
+  list(
+    model = model,
+    AICc = AICc(model),
+    R2 = calc_r2(model, df)
+  )
+}
+
+# plotting
+plots <- list()
+
+for(s in levels(summary_data$Salinity)) {
+
+  df <- summary_data %>% filter(Salinity == s)
+
+  fit <- fit_model_by_salinity(df, s)
+
+  newdata <- data.frame(
+    Temperature = seq(16, 32, length.out = 2000)
+  )
+
+  newdata$pred <- predict(fit$model, newdata = newdata)
+
+  p <- ggplot(df, aes(x = Temperature, y = mean)) +
+
+    geom_ribbon(
+      aes(ymin = lower, ymax = upper),
+      fill = "lightblue",
+      alpha = 0.6
+    ) +
+
+    geom_line(color = "blue", linewidth = 1.2) +
+    geom_point(size = 2.6, color = "blue") +
+
+    geom_line(
+      data = newdata,
+      aes(x = Temperature, y = pred),
+      color = "black",
+      linewidth = 1.4
+    ) +
+
+    labs(
+      title = paste("Salinity =", s),
+      x = "Temperature (°C)",
+      y = "Predation"
+    ) +
+
+    coord_cartesian(ylim = c(0, 16)) +
+
+    theme_classic(base_size = 14)
+
+  plots[[s]] <- p
+}
+
+# final figure
+final_plot <- wrap_plots(plots, ncol = 2)
+
+final_plot
 ```
 
 ![Figure4](Figure4.png)
