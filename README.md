@@ -422,7 +422,7 @@ Figure 6. Response surface showing the ratio of intact to broken clam shells / b
 ```R
 # import data
 df <- read.delim(
-  "etimation_predation_Berre.txt",
+  "estimation_predation_Berre.txt",
   header = TRUE,
   sep = "\t",
   dec = ","
