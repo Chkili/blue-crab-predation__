@@ -322,61 +322,7 @@ Figure 5. Three-dimensional predicted response surface showing the combined effe
 \---
 
 
-
-
-
-\## Spatial kriging analyses
-
-
-
-Spatial interpolation was performed to estimate monthly predation pressure across the Berre Lagoon.
-
-
-
-```R
-
-df <- read.delim("etimation\_predation\_Berre.txt")
-
-
-
-lagune <- st\_read("couche\_Berre.shp")
-
-
-
-krig <- krige(
-
-&#x20; pred \~ 1,
-
-&#x20; locations = points\_sp,
-
-&#x20; newdata = grille\_sp,
-
-&#x20; model = vgm\_model
-
-)
-
-```
-
-
-
-!\[Figure5](figures/Figure5.png)
-
-
-
-Figure 5. Monthly kriging maps showing spatial predation hotspots.
-
-
-
-\---
-
-
-
-\## No-predation niche
-
-
-
-Kriging interpolation was used to identify environmental conditions where predation is absent.
-
+\## Ratio of intact to broken shells 
 
 
 ```R
@@ -489,7 +435,7 @@ Figure 6. Response surface showing the ratio of intact to broken clam shells / b
 
 Institut Méditerranéen d’Océanologie (MIO), Marseille, France
 
-Corresponding author: \[guillaume.marchessaux@ird.fr](mailto:guillaume.marchessaux@ird.fr)
+Corresponding author: \[guillaume.marchessaux@ird.fr]
 
 
 
