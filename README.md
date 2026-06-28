@@ -23,8 +23,7 @@ It includes (i) regression analyses to estimate temperature-dependent predation 
 \[Predation biomass percentage](data/Sal\_Temp\_pourcentage\_3D.txt) <br>
 
 
-
-\[Shell breakage dataset](data/coquilles.txt) <br>
+[Shell breakage dataset](coquilles.txt) <br>
 
 
 
