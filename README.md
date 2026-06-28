@@ -323,48 +323,6 @@ Figure 5. Three-dimensional predicted response surface showing the combined effe
 
 
 
-\## Construction of biomass consumption surface
-
-
-
-Predation expressed as percentage of crab body mass consumed.
-
-
-
-```R
-
-data <- read.delim("Sal\_Temp\_pourcentage - 3D.txt")
-
-
-
-mod\_gam <- gam(
-
-&#x20; Predation \~ s(Salinity, Temperature, k = 10),
-
-&#x20; data = data,
-
-&#x20; method = "REML"
-
-)
-
-
-
-grid$Predation\_pred <- predict(mod\_gam, newdata = grid)
-
-```
-
-
-
-!\[Figure4B](figures/Figure4B.png)
-
-
-
-Figure 4B. Three-dimensional predictive surface of biomass consumption.
-
-
-
-\---
-
 
 
 \## Spatial kriging analyses
@@ -423,35 +381,99 @@ Kriging interpolation was used to identify environmental conditions where predat
 
 ```R
 
-df <- read\_delim("coquilles.txt")
-
-
-
-vgm\_emp <- variogram(blue \~ 1, df)
-
-
-
-krig <- krige(
-
-&#x20; blue \~ 1,
-
-&#x20; locations = df,
-
-&#x20; newdata = grid\_df,
-
-&#x20; model = vgm\_fit
-
+# import data
+df <- read_delim(
+  "coquilles.txt",
+  delim = "\t",
+  show_col_types = FALSE
 )
 
+# data cleaning
+df <- df %>%
+  mutate(
+    temp = as.numeric(gsub(",", ".", temp)),
+    sal  = as.numeric(gsub(",", ".", sal)),
+    blue = as.numeric(gsub(",", ".", blue))
+  ) %>%
+  filter(!is.na(temp), !is.na(sal), !is.na(blue)) %>%
+  group_by(temp, sal) %>%
+  summarise(
+    blue = mean(blue),
+    .groups = "drop"
+  )
+
+# convert to spatial points
+coordinates(df) <- ~ temp + sal
+
+# empirical variogram
+vgm_emp <- variogram(
+  blue ~ 1,
+  df
+)
+
+# variogram model fitting
+vgm_fit <- fit.variogram(
+  vgm_emp,
+  vgm(
+    psill = var(df$blue),
+    model = "Sph",
+    range = 8,
+    nugget = 0
+  )
+)
+
+# prediction grid
+temp_seq <- seq(14, 32, length.out = 200)
+sal_seq  <- seq(5, 45, length.out = 200)
+
+grid_df <- expand.grid(
+  temp = temp_seq,
+  sal = sal_seq
+)
+
+coordinates(grid_df) <- ~ temp + sal
+gridded(grid_df) <- TRUE
+
+# kriging interpolation
+krig <- krige(
+  blue ~ 1,
+  locations = df,
+  newdata = grid_df,
+  model = vgm_fit
+)
+
+# predicted values
+res <- as.data.frame(krig)
+
+z <- matrix(
+  res$var1.pred,
+  nrow = length(temp_seq),
+  ncol = length(sal_seq)
+)
+
+# 2D niche map
+image.plot(
+  temp_seq,
+  sal_seq,
+  z,
+  xlab = "Temperature (°C)",
+  ylab = "Salinity"
+)
+
+contour(
+  temp_seq,
+  sal_seq,
+  z,
+  add = TRUE
+)
+
+points(coordinates(df), pch = 16)
 ```
 
+![Figure6](Figure6.png)
 
 
-!\[Figure6](figures/Figure6.png)
-
-
-
-Figure 6. No-predation niche under low temperature and varying salinity.
+Figure 6. Response surface showing the ratio of intact to broken clam shells / broken shells of the clam Ruditapes philippinarum after predation by the blue crab Callinectes sapidus across temperature and salinity gradients. The color scale represents the ratio of intact to broken clam shells / broken shells (the higher the ratio, the fewer broken shells there are), blue = low values; red = high values. 
 
 
 
