@@ -157,7 +157,7 @@ fit\_model\_by\_salinity(summary\_data, "45")
 
 
 
-Figure 3. Temperature-dependent predation responses under different salinity treatments.
+Figure 3. Combined effect of temperature and salinity on the percentage of blue crabs (Callinectes sapidus) that did not eat on the clam Ruditapes philippinarum. The color scale represents the percentages, the contour white line represents the limit of 50 % of the population stopped to feed.
 
 
 
