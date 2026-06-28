@@ -31,11 +31,11 @@ It includes (i) regression analyses to estimate temperature-dependent predation 
 
 
 
-\[Berre Lagoon predation estimation](data/etimation\_predation\_Berre.txt) <br>
+[Berre Lagoon predation estimation](estimation\_predation\_Berre.txt) <br>
 
 
 
-\[Berre Lagoon shapefile](data/couche\_Berre.shp)
+[Berre Lagoon shapefile](couche\_Berre.shp)
 
 
 
