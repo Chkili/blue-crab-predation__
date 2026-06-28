@@ -1,6 +1,6 @@
 # Journal of Animal Ecology
 
-his R scripts come with the following research article:
+These R scripts come with the following research article:
 
 \*\*“Temperature and salinity jointly shape predation by the invasive blue crab \*Callinectes sapidus\* in the Berre Lagoon (France)”\*\* (\*Chkili et al., submitted to Journal of Animal Ecology\*).
 
@@ -324,7 +324,7 @@ Figure 5. Three-dimensional predicted response surface showing the combined effe
 
 # import data
 df <- read_delim(
-  "coquilles.txt",
+  "Shell_breakage.txt",
   delim = "\t",
   show_col_types = FALSE
 )
