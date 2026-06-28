@@ -153,11 +153,11 @@ fit\_model\_by\_salinity(summary\_data, "45")
 
 
 
-![Figure3](Figure3.png)
+![Figure4](Figure4.png)
 
 
 
-Figure 3. Combined effect of temperature and salinity on the percentage of blue crabs (Callinectes sapidus) that did not eat on the clam Ruditapes philippinarum. The color scale represents the percentages, the contour white line represents the limit of 50 % of the population stopped to feed.
+Figure 4. Effects of temperature and salinity on the predation activity of the blue crab Callinectes sapidus expressed as the number of clams (Ruditapes philippinarum) consumed per individual per day across (A) thermal conditions for each salinity treatment (5, 18, 25, 35 and 45 psu) and (B) salinity conditions for each temperature treatment (16, 20, 24, 28 and 32 °C). Black lines represent observed mean values, grey areas indicate confidence intervals, and black/red lines correspond to fitted model trends. Predation generally increased with temperature under low to intermediate salinities, whereas high salinity conditions reduced feeding activity, particularly at elevated temperatures. Regression parameters are globalized in the Supplementary Table 1.
 
 
 
